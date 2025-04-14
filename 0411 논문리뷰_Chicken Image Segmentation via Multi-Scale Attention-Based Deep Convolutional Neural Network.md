@@ -26,7 +26,7 @@
 우선, 다중 스케일 기반의 엔드-투-엔드 인코더-디코더 네트워크를 이용해 다양한 스케일의 특징을 추출합니다.
 
 **Then, an attention-based module is employed to extract and intensify effective features, thus better segmentation results can be obtained.**  
-그 다음, 주의(attention) 기반 모듈을 사용해 유효한 특징을 추출하고 강조함으로써, 더 나은 분할 결과를 얻을 수 있습니다.
+그 다음, 어텐션(attention) 기반 모듈을 사용해 유효한 특징을 추출하고 강조함으로써, 더 나은 분할 결과를 얻을 수 있습니다.
 
 **Finally, a multi-output combined loss function is proposed to make effective supervision for better segmentation.**  
 마지막으로, 더 나은 분할을 위한 효과적인 학습 지도를 위해 다중 출력 결합 손실 함수가 제안됩니다.
@@ -118,7 +118,7 @@
 ---
 
 **To address these issues mentioned above, we propose a multi-scale attention based deep network, which is named MSAnet, for effective chicken image segmentation.**  
-이러한 문제를 해결하기 위해, 우리는 효과적인 닭 이미지 분할을 위한 다중 스케일 주의 기반 딥 네트워크인 **MSAnet**을 제안합니다.
+이러한 문제를 해결하기 위해, 우리는 효과적인 닭 이미지 분할을 위한 다중 스케일 어텐션 기반 딥 네트워크인 **MSAnet**을 제안합니다.
 
 ---
 
@@ -135,7 +135,7 @@
   이미지 피라미드를 구성하여 다양한 스케일에 강건한 다중 스케일 딥 네트워크를 통해 자동적이고 효과적인 엔드-투-엔드 분할 프레임워크를 제안합니다.
 
 - **To obtain more accurate segmentation performance, we propose an attention-based strategy which includes channel attention and edge attention for effective feature extraction.**  
-  보다 정확한 분할 성능을 위해, 채널 주의와 에지 주의를 포함하는 주의 기반 전략을 제안하여 효과적인 특징 추출을 수행합니다.
+  보다 정확한 분할 성능을 위해, 채널 어텐션와 에지 어텐션를 포함하는 어텐션 기반 전략을 제안하여 효과적인 특징 추출을 수행합니다.
 
 - **A combined loss strategy based on multi-scale side-outputs is utilized to conduct effective deep supervision for the multi-scale network.**  
   다중 스케일 사이드 출력을 기반으로 한 결합 손실 전략을 통해 네트워크에 효과적인 학습 지도를 제공합니다.
@@ -365,15 +365,15 @@ Qi 등 [25]은 깊이 분리 합성곱과 특징 유사성 모듈을 사용하�
 
 > - **Fast R-CNN** : 전체 이미지를 CNN에 **한 번만 통과시켜 feature map 생성**, 이후 후보 영역(ROI)을 feature map에서 잘라내어 분류하고 위치를 보정함.  
 >   → **R-CNN보다 훨씬 빠름**  
->   → 발전한 점 : 이미지 전체에 대해 CNN **1회만 수행**, ROI Pooling 도입
+>   → **R-CNN 대비 발전한 점** : 이미지 전체에 대해 CNN **1회만 수행**, ROI Pooling 도입
 
 > - **Faster R-CNN** : 후보 영역을 외부 알고리즘 없이, CNN 안에서 자동으로 생성하는 **Region Proposal Network (RPN)**을 도입  
 >   → **Fast R-CNN의 병목이었던 Selective Search를 제거**  
->   → 발전한 점 : 제안 영역 생성까지 **네트워크 내부에서 통합**, 전체가 **엔드투엔드(end-to-end) 학습 가능**
+>   → **Fast R-CNN 대비 발전한 점** : 제안 영역 생성까지 **네트워크 내부에서 통합**, 전체가 **엔드투엔드(end-to-end) 학습 가능**
 
 > - **Mask R-CNN** : Faster R-CNN에 **픽셀 단위 마스크 분할(segmentation mask)** 기능을 추가하여, 객체의 위치뿐 아니라 **정확한 윤곽까지 예측**  
->   → 발전한 점 : **객체 인스턴스 분할(instance segmentation)** 가능  
->   → ROI Pooling 대신 더 정확한 **ROI Align** 사용
+>   → **객체 인스턴스 분할(instance segmentation)** 가능  
+>   → **Faster R-CNN 대비 발전한 점** : ROI Pooling 대신 더 정확한 **ROI Align** 사용
 
 ---
 
@@ -405,5 +405,243 @@ Qi 등 [25]은 깊이 분리 합성곱과 특징 유사성 모듈을 사용하�
 ---
 
 
+## **III. METHODOLOGY 방법론**
+
+**In this part, we introduce the proposed multi-scale attention based MSAnet method for chicken segmentation.**  
+이 장에서는 닭 이미지 분할을 위한 제안된 다중 스케일 어텐션 기반 **MSAnet** 방법을 소개합니다.
+
+**Fig. 3 illustrates the flowchart of our MSAnet segmentation method.**  
+Fig. 3은 제안된 MSAnet 분할 방법의 전체 흐름도를 보여줍니다.
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/5fe9cf46-b5ac-4c61-85fd-bb090ef2aff7" alt="image" width="500">
+</p>
+
+**The proposed method is an end-to-end deep network with four main parts.**  
+제안된 방법은 네 가지 주요 구성 요소로 이루어진 엔드-투-엔드 딥 네트워크입니다.
+
+**First, the MSAnet framework is an encoder-decoder structure network, which aims to learn effective hierarchical representation.**  
+첫째, MSAnet은 인코더-디코더 구조의 네트워크로, 효과적인 계층적 표현 학습을 목표로 합니다.
+
+**Second, we use a multi-scale module to construct an image pyramid input and achieve multi-level receptive field fusion for effective feature extraction.**  
+둘째, 다중 스케일 모듈을 사용하여 이미지 피라미드를 입력으로 구성하고, 다단계 수용 영역 융합을 통해 효과적인 특징 추출을 수행합니다.
+
+**Then the double attention module composed of channel attention and edge attention, can obtain global and local information for segmentation.**  
+셋째, 채널 어텐션와 에지 어텐션로 구성된 이중 어텐션 모듈은 분할을 위한 전역 및 지역 정보를 동시에 획득할 수 있습니다.
+
+**Last, the combined loss based on multi-scale side-outputs is utilized to provide effective supervision.**  
+마지막으로, 다중 스케일 사이드 출력에 기반한 결합 손실 함수를 사용하여 효과적인 학습 지도를 제공합니다.
+
+**The details of our MSAnet are illustrated as follows.**  
+다음에서 MSAnet의 세부 내용을 설명합니다.
+
+---
+
+### **A. ENCODER-DECODER STRUCTURE NETWORK**  
+**A. 인코더-디코더 구조 네트워크**
+
+**As shown in Fig. 3, the proposed MSAnet framework is an end-to-end U-shape network composed by an encoder part and a decoder part.**  
+**Fig. 3**에서 볼 수 있듯이, 제안된 MSAnet 프레임워크는 인코더와 디코더로 구성된 엔드-투-엔드 U자형 네트워크입니다.
+
+**The encoder part performs convolution layer with a filter bank to produce a set of encoder feature maps,**  
+인코더 부분은 필터 뱅크와 합성곱 계층을 통해 인코더 특징 맵을 생성합니다.
+
+**while the decoder part utilizes up-sampling and feature enhancement operations to output feature maps for effective image segmentation.**  
+반면 디코더 부분은 업샘플링과 특징 강화 연산을 이용하여 효과적인 이미지 분할을 위한 출력 특징 맵을 생성합니다.
+
+---
+
+### **B. MULTI-SCALE MODULE**  
+**B. 다중 스케일 모듈**
 
 
+**To deal with the various scales of chickens, we utilize multi-scale module for chicken segmentation by constructing a multi-scale input in the encoder path.**  
+닭의 다양한 크기를 처리하기 위해, 인코더 경로에서 다중 스케일 입력을 구성하여 다중 스케일 모듈을 적용합니다.
+
+**The multi-scale module has been proved effectively for image segmentation in work [21].**  
+이 다중 스케일 모듈은 이미지 분할에서 효과적인 것으로 [21]에서 입증되었습니다.
+
+**As shown in Fig. 3, two kinds of features can be integrated both from the vertical direction and horizontal direction for the ith layer of MSAnet, where i ∈ [2n].**  
+그림 3에서와 같이 MSAnet의 i번째 층에서는 수직 방향과 수평 방향에서 특징들을 통합할 수 있습니다. 여기서 i는 [2n] 범위 내의 정수입니다.
+
+---
+
+**The process for each layer can be described as**  
+각 층의 처리 과정은 다음과 같이 정의됩니다:
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/2e27c07c-66b3-4c0f-9896-6e3aef94b1af" alt="image" width="400">
+</p>
+
+---
+
+**where $I$ denotes the original chicken image, and $I_i$ denotes the $i$-th down-sampled image of $I$. $n$ is the total layer number.**  
+여기서 $I$는 원본 닭 이미지, $I_i$는 $I$의 $i$번째 다운샘플링 이미지이며, $n$은 총 층 수를 의미합니다.
+
+**The function $\mathrm{Cat}()$ denotes the concatenate operation in the channel direction.**  
+$\mathrm{Cat}()$ 함수는 채널 방향으로의 연결(concatenate) 연산을 의미합니다.
+
+**$\mathrm{CR}()$ denotes one (Conv+ReLU) layer for feature extraction while $\mathrm{CR2}()$ denotes two (Conv+ReLU) layers.**  
+$\mathrm{CR}()$는 특징 추출을 위한 하나의 Conv+ReLU 계층을, $\mathrm{CR2}()$는 두 개의 Conv+ReLU 계층을 의미합니다.
+
+**$F_{v}^{i-1}$ denotes the features obtained from the $(i-1)$-th layer in the vertical direction as shown in Fig. 3.**  
+$F_{v}^{i-1}$는 Fig. 3에서 보이듯 수직 방향으로 $(i-1)$번째 층에서 얻어진 특징을 의미합니다.
+
+**$F_i$ is the extracted feature maps of the $i$-th layer which will be fed into the corresponding attention process as shown in Fig. 3.**  
+$F_i$는 $i$번째 층에서 추출된 특징 맵이며, Fig. 3에 나타난 해당 attention 모듈로 입력됩니다.
+
+---
+
+**The multi-scale module has the following advantages for chicken segmentation:**  
+다중 스케일 모듈은 닭 이미지 분할에 대해 다음과 같은 이점을 가집니다:
+
+**1) dealing with various appearance generated by fast-growing process of chicken and making the scheme robust to different scales;**  
+1\) 닭의 빠른 성장 과정에서 나타나는 다양한 외형을 처리하고, 다양한 크기에 강건한 구조를 제공합니다.
+
+**2) light-weight parameters by integrating multi-scale images into the decoder layers to alleviate the large growth of parameters;**  
+2) 다중 스케일 이미지를 디코더 층에 통합함으로써, 매개변수 수의 과도한 증가를 줄이는 경량화 구조입니다.
+
+**3) providing effective information for better feature extraction and network supervision with side-outputs**  
+3) 사이드 출력(side-outputs)을 통해 더 나은 특징 추출과 네트워크 학습 감독을 위한 효과적인 정보를 제공합니다.
+
+---
+
+## **C. ATTENTION MECHANISM  어텐션 메커니즘**
+
+**Recently attention mechanism has demonstrated its promising performance in many tasks [34]–[37].**  
+최근 어텐션 메커니즘은 다양한 작업에서 뛰어난 성능을 보여주고 있습니다 [34]–[37].
+
+**It is challenging to segment each chicken accurately from the occluded regions due to the similar appearances of grouped chickens.**  
+무리지어 있는 닭들의 유사한 외형 때문에, 가려진 영역에서 개별 닭을 정확히 분할하는 것은 매우 어렵습니다.
+
+**To address this problem, a double attention strategy, which contains channel attention for global enhancement and edge attention for edge details enhancement, is proposed in this paper.**  
+이 문제를 해결하기 위해 본 논문에서는 전역 특징 강화를 위한 채널 어텐션(channel attention)과 경계선 세부정보 강화를 위한 엣지 어텐션(edge attention)으로 구성된 이중 어텐션 전략을 제안합니다.
+
+**The details of the attention mechanism are introduced as below.**  
+어텐션 메커니즘의 세부 내용은 다음과 같습니다.
+
+---
+
+### **Channel attention**
+
+**In order to make the network focus on more informative features, we propose to use the channel attention to generate different attention for each channel-wise feature.**  
+네트워크가 더 유의미한 특징에 집중할 수 있도록, 각 채널 단위의 특징마다 서로 다른 어텐션 값을 생성하는 채널 어텐션 방식을 제안합니다.
+
+**Suppose that a feature $f$ with size of $(c, h, w)$ is the input, the channel attention module first converts $f$ to three components $X_f$, $Y_f$, and $Z_f$ via convolution operations $X()$, $Y()$ and $Z()$, respectively.**  
+입력 특징맵 $f$의 크기가 $(c, h, w)$라고 가정하면, 채널 어텐션 모듈은 $f$를 각각 합성곱 연산 $X()$, $Y()$, $Z()$을 통해 $X_f$, $Y_f$, $Z_f$로 변환합니다.
+
+$$
+X_f = X(f), \quad Y_f = Y(f), \quad Z_f = Z(f)
+$$
+
+**The tensor $Y_f$ and $Z_f$ are obtained by conducting reshape operation for tensor $Y_f$ and $Z_f$ respectively. The sizes of the tensors $X_f$, $Y_f$ and $Z_f$ are $(c, h, w)$, $(c, hw)$ and $(hw, c)$, respectively.**  
+$Y_f$와 $Z_f$는 각각 리쉐이프 연산을 통해 얻어지며, 이들의 크기는 각각 $(c, h, w)$, $(c, hw)$, $(hw, c)$입니다.
+
+**Then, attention weights $\alpha$ are computed by the matrix multiplication between $Y_f$ and $Z_f$, then fed into a softmax operation:**  
+그 후, 어텐션 가중치 $\alpha$는 $Y_f$와 $Z_f$의 행렬곱을 통해 계산되고 소프트맥스를 거칩니다:
+
+$$
+M = Y_f \cdot Z_f, \quad \alpha = \mathrm{softmax}(M)
+$$
+
+**$X_f$ and $\alpha$ are dot-producted to obtain the final feature map $f_{CA}$.**  
+$X_f$와 $\alpha$는 내적되어 최종 어텐션 특징 맵 $f_{CA}$를 생성합니다.
+
+$$
+f_{CA} = X_f \cdot \alpha
+$$
+
+**Fig. 4 shows the pipeline of channel attention.**  
+Fig. 4는 채널 어텐션의 파이프라인을 보여줍니다.  
+→ 📌 **[Figure 4 삽입 위치]**
+
+**The channel attention aims to enhance the channels with learned weight parameters in a global manner.**  
+채널 어텐션은 학습된 가중치를 사용하여 전역적으로 채널을 강화하는 데 목적이 있습니다.
+
+**We empirically set the parameters of $X()$, $Y()$, and $Z()$ to 1-layer convolutions with 64 channels and $3\times3$ kernel sizes.**  
+$X()$, $Y()$, $Z()$는 각각 64채널의 $3 \times 3$ 커널을 갖는 1-layer 합성곱으로 설정했습니다.
+
+---
+
+### **Edge attention**
+
+**Inspired by [38], [39], we propose to use edge attention to recover detailed edge information.**  
+[38], [39]에서 영감을 받아 엣지 어텐션을 사용하여 정밀한 경계 정보를 복원하고자 합니다.
+
+**Edge attention seeks to exploit guided filter to extract edge detailed information from high-resolution images.**  
+엣지 어텐션은 고해상도 이미지로부터 경계 정보를 추출하기 위해 가이드 필터를 활용합니다.
+
+**Hence, high-quality segmentation results can be obtained from low-resolution poorly segmented results and precise segmented boundaries can be maintained after up-sampling.**  
+따라서, 낮은 해상도에서도 정밀한 경계를 유지하며 고품질 분할 결과를 얻을 수 있습니다.
+
+**Guided filter [38] is an edge-preserving image filter and has been incorporated into different deep learning tasks.**  
+Guided filter [38]는 경계를 보존하는 이미지 필터이며 다양한 딥러닝 작업에 활용되고 있습니다.
+
+---
+
+**Assume that feature map $F_l$ with size $(c, h, w)$ and $F_h$ with size $(c, 2h, 2w)$ are given.**  
+크기가 $(c, h, w)$인 $F_l$과 $(c, 2h, 2w)$인 $F_h$가 주어진다고 가정합니다.
+
+**The edge attention first down-samples (bilinear) $F_h$ to the half of its scale to obtain $F_l$.**  
+엣지 어텐션은 먼저 $F_h$를 이중선형 보간으로 다운샘플링하여 $F_l$을 생성합니다.
+
+**Based on $F_l$ and $F_l$, the attention map $T$ can be obtained.**  
+$F_l$과 $F_l$을 기반으로 어텐션 맵 $T$가 생성됩니다.
+
+**Then the reconstruction error is minimized to obtain the coefficients of the attention guided filter $w_k$ and $b_k$ for each square window $s_k$:**  
+이후 다음 식을 통해 각 창 $s_k$에 대한 필터 계수 $w_k$, $b_k$를 최소 오차로 추정합니다:
+
+$$
+F_{ki} = w_k F_{li} + b_k, \quad i \in s_k
+$$
+
+$$
+\min_{w_k, b_k} E(w_k, b_k) = \sum_{i \in s_k} T_i^2(w_k F_{li} + b_k - F_{li})^2 + \lambda w_k^2
+$$
+
+**Then the output is expressed by linear combination:**  
+최종 출력은 다음과 같은 선형 조합으로 표현됩니다:
+
+$$
+F_i = W_l F_l + B_l
+$$
+
+**After upsampling $W_l$, $B_l$ to $W_h$, $B_h$, the final high-resolution output becomes:**  
+$W_l$, $B_l$을 업샘플링하여 $W_h$, $B_h$를 만들고, 최종 고해상도 출력은 다음과 같습니다:
+
+$$
+F_h = W_h F_h + B_h
+$$
+
+**Fig. 5 illustrates the edge attention process.**  
+Fig. 5는 엣지 어텐션 과정을 설명합니다.  
+→ 📌 **[Figure 5 삽입 위치]**
+
+---
+
+### **Double attention summary**
+
+**The double attention module with channel attention and edge attention can guide the multi-scale network to extract more effective features for chicken segmentation.**  
+채널 어텐션과 엣지 어텐션으로 구성된 이중 어텐션 모듈은 다중 스케일 네트워크가 더 효과적인 특징을 추출할 수 있도록 도와줍니다.
+
+**The flowchart of the proposed double attention module based network is shown in Fig. 3.**  
+이중 어텐션이 적용된 전체 네트워크 흐름은 Fig. 3에 나와 있습니다.
+
+---
+
+### **Mask prediction and multi-scale side-outputs**
+
+**The detailed pipeline of multi-scale side-outputs and combined loss are shown in Fig. 6.**  
+다중 스케일 사이드 출력과 결합 손실의 세부 흐름은 Fig. 6에 나와 있습니다.  
+→ 📌 **[Figure 6 삽입 위치]**
+
+**After obtaining features $FEA_1$ to $FEA_n$ from edge attention and convolution operations, multi-scale outputs $M_1$ to $M_n$ are generated through the mask prediction block $MP()$ as follows:**  
+엣지 어텐션과 합성곱 연산을 거친 $FEA_1$부터 $FEA_n$까지의 특징은 마스크 예측 블록 $MP()$를 통해 다음과 같이 다중 스케일 출력 $M_1$부터 $M_n$까지 생성됩니다:
+
+$$
+M_1 = MP(FEA_1), \quad M_i = MP(FEA_i), \quad M_n = MP(FEA_n)
+$$
+
+**Here, $MP()$ includes up-sampling, convolution, and softmax operations.**  
+여기서 $MP()$는 업샘플링, 합성곱, 소프트맥스 연산을 포함합니다.
+
+**Each side-output serves as auxiliary supervision to help the network learn better segmentation.**  
+각 사이드 출력은 보조 학습 신호로 작용하여 더 나은 분할 결과를 도출하도록 도와줍니다.
