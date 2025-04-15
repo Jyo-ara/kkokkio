@@ -404,7 +404,7 @@ Qi 등 [25]은 깊이 분리 합성곱과 특징 유사성 모듈을 사용하�
 ---
 ---
 
-## **III. METHODOLOGY 방법론**
+# **III. METHODOLOGY 방법론**
 
 **In this part, we introduce the proposed multi-scale attention based MSAnet method for chicken segmentation.**  
 이 장에서는 닭 이미지 분할을 위한 제안된 다중 스케일 어텐션 기반 **MSAnet** 방법을 소개합니다.
@@ -769,6 +769,7 @@ $$
 <p align="center">
     <img src="https://github.com/user-attachments/assets/d9e80883-8063-4475-84ef-3a12357c7bd3" alt="image" width="700">
 </p>
+
 그림 6. 다중 스케일 마스크 예측 및 결합 손실 처리 과정.
 
 **To simplify, the main encoder-decoder part of the network is simply denoted as U shape which can be found in Fig. 3.**  
@@ -818,6 +819,7 @@ $MP(.)$는 업샘플링, 합성곱, 소프트맥스 연산으로 구성된 마�
 **The side-output module is regarded as a classifier to produce a companion local output map for each layer by mask prediction operation.**  
 사이드 출력 모듈은 각 층에 대해 마스크 예측 연산을 통해 지역적 보조 출력 맵을 생성하는 분류기로 간주됩니다.
 
+---
 ---
 
 ### **D. COMBINED LOSS**  
@@ -877,3 +879,432 @@ $\text{loss}(i)$는 $i$번째 사이드 출력층의 손실 값을 의미합니�
 사이드 출력 분할 맵을 효과적으로 활용하기 위해, 모든 사이드 출력 맵의 평균을 최종 분할 결과로 사용합니다.
 
 ---
+---
+
+# **IV. EXPERIMENT 실험**
+
+### **A. CHICKEN DATASET**  
+**A. 닭 데이터셋**
+
+**According to our survey, there is no publicly available chicken dataset for chicken segmentation and analysis.**  
+조사에 따르면, 닭 분할 및 분석을 위한 공개된 닭 데이터셋은 존재하지 않습니다.
+
+**In this work, we construct a novel chicken database to study the behaviour of chicken.**  
+이에 본 연구에서는 닭의 행동을 연구하기 위해 새로운 닭 데이터베이스를 구축하였습니다.
+
+**In order to observe chicken in a cage clearly, all the chicken images are captured from the top viewing by a monocular camera with 24 frames per second (fps).**  
+우리 안의 닭을 명확히 관찰하기 위해, 모든 이미지는 초당 24프레임(fps)의 단안 카메라로 위쪽에서 촬영하였습니다.
+
+**The resolution of each captured image is 790 × 930.**  
+각 이미지의 해상도는 790 × 930입니다.
+
+**These chicken images are captured at different time periods.**  
+이 이미지들은 다양한 시간대에 걸쳐 촬영되었습니다.
+
+**The number of chickens in different frames varies from 8 to 12 due to the real living conditions as shown in Fig. 1.**  
+Fig. 1에서 보이듯, 실제 사육 환경에 따라 프레임마다 닭의 수는 8마리에서 12마리까지 다양합니다.
+
+**The number of chickens in the cage reduces due to some diseases and the scale of each chicken becomes large during the growing season.**  
+질병 등의 이유로 닭의 수가 감소하기도 하며, 성장 시기에는 개체 크기가 점차 커집니다.
+
+**The proposed chicken database can be used for chicken segmentation, tracking and recognition for better welfare by intelligent analysis.**  
+제안된 닭 데이터베이스는 분할, 추적, 인식을 포함한 지능형 분석을 통해 동물 복지 향상에 활용될 수 있습니다.
+
+---
+
+**In this paper, we focus on deep neural network based segmentation methods.**  
+본 논문에서는 딥 뉴럴 네트워크 기반의 분할 기법에 집중합니다.
+
+**We label each image to obtain its binary image as the ground truth (GT) with the annotation tool VGG Image Annotator (VIA) [40], [41],**  
+각 이미지는 VGG Image Annotator(VIA) [40], [41] 도구를 사용하여 이진 마스크 형태의 정답(GT)으로 라벨링됩니다.
+
+**which is a standalone manual annotation software for images.**  
+VIA는 독립 실행형 수동 이미지 주석 도구입니다.
+
+**The illustration of the label process by VIA tool can be found in Fig. 7.**  
+VIA 도구를 이용한 라벨링 과정은 Fig. 7에 나와 있습니다.
+
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/493b97e9-234d-4baa-a671-21f31c726c19" alt="image" width="700">
+</p>
+
+**It is a time-consuming process to label each chicken.**  
+각 닭을 라벨링하는 과정은 매우 시간 소모적입니다.
+
+**Currently, there are 330 annotated images in our chicken database,**  
+현재 데이터베이스에는 총 330장의 주석된 이미지가 있으며,
+
+**and 60% images are used for training while the rest images for testing in the experiment.**  
+이 중 60%는 학습용, 나머지는 실험을 위한 테스트용으로 사용됩니다.
+
+**Fig. 1 shows several examples of the original chicken images and the corresponding binary masks.**  
+Fig. 1에는 원본 닭 이미지와 이에 대응하는 바이너리 마스크 예시가 제시되어 있습니다.
+
+---
+
+**Fig. 2 demonstrates some existing segmentation challenges for chickens in the cage.**  
+Fig. 2는 우리 안의 닭을 분할할 때 발생하는 주요 어려움들을 보여줍니다.
+
+**For one thing, the camera position can not always be optimal, so that occlusions can not be avoided.**  
+첫째, 카메라 위치가 항상 최적이 아니기 때문에 가림 현상(occlusion)을 피할 수 없습니다.
+
+**Especially, chickens usually tend to flock, which makes it hard to segment each chicken.**  
+특히 닭들이 무리를 이루는 특성상, 개별 닭을 분할하는 것이 어렵습니다.
+
+**Furthermore, different variations such as lighting, similar appearances, growing-scale or noises from objects also have influences on the quality of the images and segmentation.**  
+더 나아가, 조명 변화, 유사한 외형, 크기 변화, 주변 사물로 인한 잡음 등도 이미지 품질 및 분할 성능에 영향을 줍니다.
+
+---
+---
+
+### **B. IMPLEMENTATION**  
+**B. 구현 및 실험 설정**
+
+**The proposed method is implemented with Python on Ubuntu system.**  
+제안된 방법은 Ubuntu 시스템에서 Python으로 구현되었습니다.
+
+**In the training process, we employ Adam to optimize the deep model with the learning rate of 0.0015 with 100 epochs and the batch size is set to 2.**  
+학습 과정에서는 Adam 옵티마이저를 사용하였고, 학습률은 0.0015, 에포크 수는 100, 배치 크기는 2로 설정하였습니다.
+
+**The radius of windows $r$ is set to 2 empirically.**  
+윈도우의 반지름 $r$은 실험적으로 2로 설정하였습니다.
+
+**In order to evaluate the performance of our proposed method with several state-of-the-art methods effectively,**  
+제안된 방법의 성능을 여러 최신 기법들과 효과적으로 비교하기 위해,
+
+**we compare these methods on the constructed chicken database.**  
+제작된 닭 데이터베이스를 기반으로 비교 실험을 수행하였습니다.
+
+---
+---
+
+### **C. METRICS**  
+**C. 평가 지표**
+
+
+**To conduct experiments comprehensively, we follow the previous segmentation methods [16], [21],**  
+실험을 포괄적으로 수행하기 위해, 우리는 이전 분할 기법들 [16], [21]을 따르며,
+
+**and employ the commonly-used segmentation metrics including Specificity (Spe), Sensitivity (Sen), Accuracy (Acc), intersection-over-union (IoU) to measure the performance of chicken segmentation methods.**  
+닭 이미지 분할 성능을 측정하기 위해 일반적으로 사용되는 평가 지표인 Specificity (Spe), Sensitivity (Sen), Accuracy (Acc), IoU (Intersection-over-Union)를 사용합니다.
+
+**The mean intersection-over-union (MIoU) is the average segmentation results of IoU for metric.**  
+평균 IoU (MIoU)는 IoU 지표의 평균 분할 성능을 의미합니다.
+
+**The corresponding metrics are denoted as followings.**  
+각 지표는 다음과 같이 정의됩니다:
+
+---
+
+$$
+Sen = \frac{TP}{TP + FN} \quad (12)
+$$
+
+**Sensitivity (민감도) : 참 양성 비율**  
+분할된 영역 중 실제 정답(양성)으로 잘 분류된 비율입니다.
+
+---
+
+$$
+Spe = \frac{TN}{TN + FP} \quad (13)
+$$
+
+**Specificity (특이도) : 참 음성 비율**  
+분할되지 않은 영역 중 실제로도 음성인 영역이 올바르게 예측된 비율입니다.
+
+---
+
+$$
+Acc = \frac{TP + TN}{TP + TN + FP + FN} \quad (14)
+$$
+
+**Accuracy (정확도)**  
+전체 픽셀 중 올바르게 예측된 픽셀 비율입니다.
+
+---
+
+$$
+IoU = \frac{TP}{TP + FP + FN} \quad (15)
+$$
+
+**Intersection-over-Union (IoU, 교집합 비율)**  
+예측된 영역과 실제 정답 마스크 간의 겹치는 정도를 나타냅니다.
+
+---
+
+**where:**  
+다음은 기호들의 의미입니다:
+
+- **TP** denotes true positive rate,  
+  → **TP** : 참 양성 (정답이 1이고 예측도 1인 경우)  
+- **FP** denotes false positive rate,  
+  → **FP** : 거짓 양성 (정답은 0인데 예측이 1인 경우)  
+- **TN** denotes true negative rate,  
+  → **TN** : 참 음성 (정답이 0이고 예측도 0인 경우)  
+- **FN** denotes false negative rate.  
+  → **FN** : 거짓 음성 (정답은 1인데 예측이 0인 경우)
+
+**Additionally, the area under the receiver operating characteristic curve (AUC) is also utilized to evaluate the segmentation performance of different segmentation methods.**  
+또한, 다양한 분할 방법의 성능 평가를 위해 **수신자 조작 특성 곡선 아래 면적 (AUC)** 또한 사용됩니다.
+
+---
+---
+
+### **D. EXPERIMENTAL ANALYSIS**  
+**D. 실험 결과 분석**
+
+**Tab. 1 demonstrates the quantitative comparison of different segmentation methods on the chicken dataset.**  
+표 1은 닭 데이터셋에서 다양한 분할 방법들의 정량적 비교 결과를 보여줍니다.
+
+**We have highlighted the highest scores for each column.**  
+각 열마다 가장 높은 점수는 강조 표시되어 있습니다.
+
+**From Tab. 1 we can observe that the proposed MSAnet achieves the highest scores in the metrics of Acc, Sen, AUC and MIoU compared with Mask-RCNN, Unet and Mnet methods.**  
+표 1에서 확인할 수 있듯이, 제안된 MSAnet은 Accuracy, Sensitivity, AUC, MIoU 지표에서 Mask-RCNN, Unet, Mnet보다 가장 높은 성능을 기록하였습니다.
+
+---
+
+**Moreover, among these methods in Tab. 1, Unet, Mnet and MSAnet are the direct segmentation methods with an encoder-decoder structure.**  
+또한, 표 1의 방법들 중 Unet, Mnet, MSAnet은 모두 인코더-디코더 구조를 사용하는 직접 분할(direct segmentation) 방식입니다.
+
+**Unet is a single-scale module based network while Mnet and MSAnet are multi-scale module based networks.**  
+Unet은 단일 스케일 모듈 기반 네트워크이며, Mnet과 MSAnet은 다중 스케일 모듈 기반 네트워크입니다.
+
+---
+
+**Compared with Unet method, Mnet and MSAnet show the advantages of utilizing multi-scale information for chicken segmentation with higher scores.**  
+Unet과 비교했을 때, Mnet과 MSAnet은 다중 스케일 정보를 활용함으로써 더 높은 성능을 보여줍니다.
+
+**Besides, the proposed MSAnet composed of the multi-scale module, double attention module and combined loss performs better than Unet and Mnet.**  
+또한, 다중 스케일 모듈, 이중 어텐션 모듈, 결합 손실로 구성된 제안된 MSAnet은 Unet과 Mnet보다 더 나은 성능을 보입니다.
+
+---
+
+**The detailed analysis for each component of MSAnet can be found in ablation study.**  
+MSAnet의 각 구성 요소에 대한 상세한 분석은 ablation study에서 확인할 수 있습니다.
+
+**As the detect-then-segment method, Mask-RCNN [16] achieves lower Acc, AUC and MIoU results compared with other methods on the chicken dataset and the detected positions have influences on the performance of chicken segmentation.**  
+검출 후 분할(detect-then-segment) 방식인 Mask-RCNN [16]은 닭 데이터셋에서 다른 방법들에 비해 Acc, AUC, MIoU 성능이 낮으며, 검출된 위치의 정확도가 분할 성능에 영향을 미칩니다.
+
+---
+
+**📊 TABLE 1. Quantitative comparison of segmentation methods on the chicken dataset**  
+**📊 표 1. 닭 데이터셋에 대한 분할 방법들의 정량적 비교**
+
+| Method         | Acc   | Sen   | Spe   | AUC   | MIoU  |
+|----------------|--------|--------|--------|--------|--------|
+| Mask-RCNN [16] | 90.1% | 77.3% | **99.6%** | 88.4% | 76.8% |
+| Unet [19]      | 92.2% | 85.5% | 97.1% | 98.2% | 82.1% |
+| Mnet [21]      | 92.9% | 88.2% | 96.3% | 98.3% | 83.8% |
+| **MSAnet (Ours)** | **94.6%** | **90.7%** | 97.8% | **99.1%** | **87.7%** |
+
+---
+
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/d5e3999d-1c6f-4bb4-8b54-9c876689e3f7" alt="image" width="700">
+</p>
+
+**To evaluate the proposed MSAnet method as well as other methods, we also demonstrate some segmentation results in Fig. 8.**  
+제안된 MSAnet뿐만 아니라 다른 방법들의 성능을 평가하기 위해, Fig. 8에는 일부 분할 결과도 제시하였습니다.
+
+**There are three chicken images and the corresponding ground truth denoted as (a) in Fig. 8,**  
+Fig. 8의 (a)에는 세 개의 닭 이미지와 그에 해당하는 정답 마스크가 표시되어 있습니다.
+
+**while the results of Mask-RCNN, Unet, Mnet and the proposed MSAnet method are shown as (b), (c), (d) and (e) respectively.**  
+(b), (c), (d), (e)에는 각각 Mask-RCNN, Unet, Mnet, 제안된 MSAnet의 분할 결과가 나열되어 있습니다.
+
+---
+
+**There are two images for (b)–(e), and the left image denotes segmentation result with textures for better observation while the right image denotes binary mask for comparing with ground truth.**  
+(b)~(e) 각각에 두 개의 이미지가 있으며, 왼쪽은 질감이 보이는 분할 결과 이미지, 오른쪽은 정답 마스크와 비교를 위한 이진 마스크입니다.
+
+---
+
+**From Fig. 8 we can observe that the Mask-RCNN method can well segment each chicken, but can not obtain very accurate boundary information of the segmented chicken.**  
+Fig. 8을 통해 Mask-RCNN은 닭 개체를 전체적으로 잘 분할하지만, 경계 정보를 정밀하게 구분하지는 못함을 알 수 있습니다.
+
+**Compared with Mask-RCNN, Unet, Mnet and MSAnet methods can obtain better shape information.**  
+Mask-RCNN과 비교할 때, Unet, Mnet, MSAnet은 더 정확한 형상 정보를 획득할 수 있습니다.
+
+---
+
+**For the U-shape based encoder-decoder networks, MSAnet achieves better segmentation results with more edge details.**  
+U자형 인코더-디코더 구조를 기반으로 하는 네트워크 중, MSAnet은 더욱 정밀한 경계 표현과 함께 뛰어난 분할 결과를 보여줍니다.
+
+---
+
+**It should be noted that compared with Mask-RCNN method, Unet-based methods may have adhesion parts when chickens grouped together heavily as shown in the third image (Image_3) of Fig. 8.**  
+단, Fig. 8의 세 번째 이미지(Image_3)에서처럼 닭들이 밀집해 있을 때는 Unet 기반 방법이 개체 간의 접착 부분(adhesion)을 분리하지 못하는 경우가 존재함도 주목해야 합니다.
+
+---
+---
+
+### **E. ABLATION STUDY**  
+**E. 구성 요소 분리 실험 (Ablation Study)**
+
+
+**We have conducted the ablation study for understanding the influence of each component of our MSAnet.**  
+MSAnet의 각 구성 요소가 모델 성능에 미치는 영향을 파악하기 위해 ablation study를 수행하였습니다.
+
+**To describe each component clearly, we denote the multi-scale encoder-decoder framework as MSnet,**  
+각 구성 요소를 명확히 설명하기 위해, 다중 스케일 인코더-디코더 프레임워크를 **MSnet**으로 정의합니다.
+
+**the channel attention based multi-scale encoder-decoder framework as MSCAnet,**  
+채널 어텐션이 추가된 다중 스케일 인코더-디코더 구조는 **MSCAnet**으로,
+
+**the edge attention based multi-scale encoder-decoder framework as MSEAnet**  
+엣지 어텐션이 추가된 구조는 **MSEAnet**으로,
+
+**and the double attention module (channel and edge attention) based multi-scale encoder-decoder framework as MSAnet.**  
+채널 + 엣지 어텐션을 모두 포함한 구조는 최종 모델인 **MSAnet**으로 표기합니다.
+
+---
+
+**Tab. 2 reports the segmentation results of Acc, Sen, Spe, AUC and MIoU for the methods mentioned above.**  
+표 2는 위 모델들에 대한 Accuracy, Sensitivity, Specificity, AUC, MIoU 성능을 정량적으로 비교한 것입니다.
+
+**We have highlighted the highest scores for each column.**  
+각 열마다 가장 높은 성능은 강조 표시되어 있습니다.
+
+---
+
+**As observed from Tab. 2, MSCAnet and MSEAnet methods achieve better performance than MSnet,**  
+표 2에서 보듯, MSCAnet과 MSEAnet은 기본 모델인 MSnet보다 더 나은 성능을 보입니다.
+
+**which demonstrates that the channel attention and edge attention module are effective for feature extraction and enhancement.**  
+이는 채널 어텐션과 엣지 어텐션 모듈이 특징 추출 및 강화에 효과적이라는 것을 보여줍니다.
+
+---
+
+**Besides, MSAnet performs better than MSnet, MSCAnet and MSEAnet.**  
+또한, MSAnet은 MSnet, MSCAnet, MSEAnet 모두보다 우수한 성능을 나타냅니다.
+
+**Hence, the multi-scale attention based fusion model is effective to extract more details for accurate chicken segmentation.**  
+따라서 다중 어텐션 기반의 융합 모델은 보다 정밀한 닭 이미지 분할을 위한 세부 정보 추출에 효과적임을 확인할 수 있습니다.
+
+---
+
+### 📊 **TABLE 2. Ablation study on chicken dataset**  
+**표 2. 닭 데이터셋에 대한 구성 요소별 성능 비교**
+
+| Model     | Acc (%) | Sen (%) | Spe (%) | AUC (%) | MIoU (%) |
+|-----------|---------|---------|---------|---------|-----------|
+| MSnet     | 92.9    | 88.2    | 96.3    | 98.0    | 83.8      |
+| MSCAnet   | 93.3    | 89.8    | 96.0    | 98.3    | 84.8      |
+| MSEAnet   | 94.1    | 89.2    | **97.9**| 98.6    | 86.5      |
+| **MSAnet**| **94.6**| **90.7**| 97.8    | **99.1**| **87.7**  |
+
+---
+---
+
+아래는 요청하신 **F. COMPLEXITY ANALYSIS** 섹션의 전체 내용을  
+**영어 한 줄 – 한글 한 줄** 형식으로 번역한 결과이며, 표(Table 3)는 한눈에 보기 쉽게 재구성했습니다.
+
+---
+
+### **F. COMPLEXITY ANALYSIS**  
+**F. 복잡도 분석**
+
+**In this part, we provide the complexity analysis about the proposed MSAnet framework and other compared methods.**  
+이 절에서는 제안된 MSAnet 프레임워크 및 비교 방법들의 복잡도 분석을 제시합니다.
+
+---
+
+**In terms of time consumption, we compare our MSAnet method with Mask-RCNN [16], Unet [19], Mnet [21], MSCAnet and MSEAnet.**  
+시간 소요 관점에서, 제안한 MSAnet과 Mask-RCNN [16], Unet [19], Mnet [21], MSCAnet, MSEAnet을 비교합니다.
+
+**In our experiment, all the methods are implemented and tested on the chicken dataset with a single NVIDIA RTX 2080Ti GPU.**  
+모든 방법은 닭 데이터셋을 기반으로 단일 NVIDIA RTX 2080Ti GPU에서 구현 및 테스트되었습니다.
+
+**The quantitative comparison of the time statistics for different segmentation methods is shown in Tab. 3.**  
+각 분할 방법에 대한 시간 통계 비교 결과는 표 3에 나와 있습니다.
+
+---
+
+### 📊 **TABLE 3. Quantitative comparison of the time consumption**  
+**표 3. 훈련 및 테스트 시간 비교**
+
+| Method         | Training Time (min) | Testing Time (s) |
+|----------------|----------------------|------------------|
+| Mask-RCNN [16] | 75.4                 | 0.73             |
+| Unet [19]      | **60.8**             | **0.54**         |
+| Mnet [21]      | 69.6                 | 0.55             |
+| MSCAnet        | 105.9                | 0.57             |
+| MSEAnet        | 125.8                | 0.58             |
+| **MSAnet (Ours)** | 166.8             | 0.60             |
+
+---
+
+**Tab. 3 demonstrates the training time and testing time of our method as well as other compared methods.**  
+표 3은 제안한 방법과 다른 비교 방법들의 학습 및 테스트 시간을 보여줍니다.
+
+**From Tab. 3 we can see that among these methods, Unet method takes the least time for training**  
+표 3에서 볼 수 있듯이, Unet은 학습 시간 측면에서 가장 적은 시간이 소요됩니다.
+
+**while other methods, like Mnet, MSCAnet, MSEAnet and MSAnet, take a little more time due to the multi-scale and attention module.**  
+반면 Mnet, MSCAnet, MSEAnet, MSAnet과 같은 방법은 다중 스케일 및 어텐션 모듈로 인해 시간이 더 소요됩니다.
+
+**It should be noted that the training process can be done offline.**  
+다만, 학습 과정은 오프라인에서 수행될 수 있음을 주목할 필요가 있습니다.
+
+**Besides, Unet method also has the least testing time among these methods**  
+또한, Unet은 테스트 시간도 가장 짧은 결과를 보입니다.
+
+**while the testing time of Mnet, MSCAnet, MSEAnet and MSAnet method grows slightly.**  
+반면 Mnet, MSCAnet, MSEAnet, MSAnet은 테스트 시간이 다소 증가합니다.
+
+**The proposed MSAnet method takes less time compared with Mask-RCNN method.**  
+제안된 MSAnet은 Mask-RCNN에 비해 더 적은 시간으로 수행됩니다.
+
+---
+
+**Generally, with similar testing time, the proposed MSAnet method can achieve better segmentation results on the chicken dataset.**  
+전반적으로, 유사한 테스트 시간 조건 하에서 제안된 MSAnet은 닭 데이터셋에서 더 나은 분할 성능을 달성합니다.
+
+---
+---
+
+### **V. CONCLUSION**  
+**V. 결론**
+
+**In this paper, we propose an effective end-to-end network for chicken image segmentation.**  
+본 논문에서는 닭 이미지 분할을 위한 효과적인 엔드-투-엔드 네트워크를 제안하였습니다.
+
+**To study the chicken image segmentation for better animal welfare, we construct a chicken dataset for research use.**  
+동물 복지 향상을 위한 닭 이미지 분할 연구를 위해 연구용 닭 데이터셋을 구축하였습니다.
+
+---
+
+**For better segmentation performance, we propose to use multi-scale information and attention-based strategy which includes channel attention and edge attention for effective feature extraction.**  
+더 나은 분할 성능을 위해, 다중 스케일 정보와 채널 어텐션, 엣지 어텐션을 포함한 어텐션 기반 전략을 제안하여 효과적인 특징 추출을 수행합니다.
+
+**Besides, a combined loss strategy based on multi-scale outputs is utilized to conduct effective deep supervision in the network.**  
+또한, 다중 스케일 출력 기반의 결합 손실 전략을 도입하여 네트워크의 효과적인 학습을 유도합니다.
+
+---
+
+**Experimental results demonstrate that the proposed MSAnet performs well for chicken image segmentation.**  
+실험 결과, 제안된 MSAnet은 닭 이미지 분할에서 우수한 성능을 보임을 확인할 수 있었습니다.
+
+---
+
+**In future work, we will continue to extend the chicken dataset to contain more variants and conditions for chicken behaviour study, such as detection, segmentation, tracking and recognition.**  
+향후 연구에서는 닭의 행동 분석을 위한 탐지, 분할, 추적, 인식 등 다양한 작업에 대응할 수 있도록, 데이터셋의 변이성과 상황을 확장할 예정입니다.
+
+---
+---
+
+### **VI. ACKNOWLEDGMENT**  
+**VI. 감사의 글**
+
+**This work was partially supported by National Natural Science Foundation of China (No. 61802144 and No. 61907026),**  
+본 연구는 중국 국가자연과학기금(National Natural Science Foundation of China, 과제번호 61802144 및 61907026)의 일부 지원을 받았습니다.
+
+**Shandong Province Higher Educational Science and Technology Program (J18KA392)**  
+또한 산둥성 고등교육 과학기술 프로그램(J18KA392)의 지원과,
+
+**and the Fundamental Research Funds of Shandong University.**  
+산둥대학교의 기초 연구 기금의 지원을 받았습니다.
+
+**Thanks for the help of Junyi Yu to label chicken images.**  
+닭 이미지 라벨링에 도움을 준 **Junyi Yu**에게 감사드립니다.
