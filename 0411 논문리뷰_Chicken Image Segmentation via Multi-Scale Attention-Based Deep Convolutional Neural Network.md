@@ -404,7 +404,6 @@ Qi 등 [25]은 깊이 분리 합성곱과 특징 유사성 모듈을 사용하�
 ---
 ---
 
-
 ## **III. METHODOLOGY 방법론**
 
 **In this part, we introduce the proposed multi-scale attention based MSAnet method for chicken segmentation.**  
@@ -435,6 +434,7 @@ Fig. 3은 제안된 MSAnet 분할 방법의 전체 흐름도를 보여줍니다.
 다음에서 MSAnet의 세부 내용을 설명합니다.
 
 ---
+---
 
 ### **A. ENCODER-DECODER STRUCTURE NETWORK**  
 **A. 인코더-디코더 구조 네트워크**
@@ -448,6 +448,7 @@ Fig. 3은 제안된 MSAnet 분할 방법의 전체 흐름도를 보여줍니다.
 **while the decoder part utilizes up-sampling and feature enhancement operations to output feature maps for effective image segmentation.**  
 반면 디코더 부분은 업샘플링과 특징 강화 연산을 이용하여 효과적인 이미지 분할을 위한 출력 특징 맵을 생성합니다.
 
+---
 ---
 
 ### **B. MULTI-SCALE MODULE**  
@@ -501,6 +502,7 @@ $F_i$는 $i$번째 층에서 추출된 특징 맵이며, Fig. 3에 나타난 해
 **3) providing effective information for better feature extraction and network supervision with side-outputs**  
 3) 사이드 출력을 통해 더 나은 특징 추출과 네트워크 학습 감독을 위한 효과적인 정보를 제공합니다.
 
+---
 ---
 
 ## **C. ATTENTION MECHANISM  어텐션 메커니즘**
@@ -697,9 +699,181 @@ $$
 여기서 $\lambda$는 실험적으로 0.02로 설정된 정규화 파라미터이며, $T_i$는 위치 $i$에 대한 어텐션 가중치입니다.
 
 **The closed-form solution can be referred as:**  
-이 문제의 **명시적 해 (closed-form solution)**는 다음과 같습니다:
+이 문제의 **명시적 해 (closed-form solution)** 는 다음과 같습니다:
 
 <p align="center">
     <img src="https://github.com/user-attachments/assets/38282f4a-6dd5-42de-b58f-ef2e9008c4ab" alt="image" width="400">
 </p>
 
+---
+
+**$N_k$ is the number of the pixels in $w_k$**  
+$N_k$는 윈도우 $w_k$ 안의 픽셀 수를 의미합니다.
+
+**$X_i = \frac{T_i}{\sum_{i \in w_k} T_i}$**  
+$X_i$는 윈도우 내 정규화된 어텐션 가중치입니다.
+
+**and <img src="https://github.com/user-attachments/assets/bbe1f13f-06f9-4409-8227-8508e384497f" width="20"/> is the mean of $(\cdot)$, which is corresponding to the *Mean filter* described in Fig. 5.**  
+그리고 <img src="https://github.com/user-attachments/assets/bbe1f13f-06f9-4409-8227-8508e384497f" width="20"/> 표기는 해당 항목의 평균을 의미하며, 이는 Fig. 5에 설명된 평균 필터와 대응됩니다.
+
+---
+
+**As each position $i$ is involved in multiple windows with different coefficients $w_k, b_k$,**  
+각 위치 $i$는 서로 다른 계수 $w_k$, $b_k$를 갖는 여러 윈도우에 포함되므로,
+
+**we average all the values of $\hat{F}_{ki}$ from different windows to generate $\hat{F}_i$,**  
+다양한 윈도우로부터 계산된 $\hat{F}_{ki}$ 값들을 평균하여 최종 출력 $\hat{F}_i$를 생성합니다.
+
+**which is equal to average the coefficients $(w_k, b_k)$ of all the windows overlapping $i$, as following:**  
+이는 곧, $i$를 포함하는 모든 윈도우의 계수 $(w_k, b_k)$를 평균한 것과 동일합니다:
+
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/33bfc53f-1385-41a9-b0e1-c500fe8a3df3" alt="image" width="400">
+</p>
+
+**which also can be represented as**  
+이 식은 다음과 같이 표현될 수 있습니다:
+
+$$
+\hat{F}_i = W_l \ast F'_l + B_l \quad (7)
+$$
+
+---
+
+**where $\Omega_i$ is the set of all the windows including the position $i$, and $\ast$ is the element-wise multiplication.**  
+여기서 $\Omega_i$는 위치 $i$를 포함하는 모든 윈도우들의 집합이며, $\ast$는 원소별 곱셈 연산(element-wise multiplication)을 의미합니다.
+
+**After up-sampling $W_l$ and $B_l$ to obtain $W_h$ and $B_h$, the final output is calculated by**  
+$W_l$과 $B_l$을 업샘플링하여 $W_h$, $B_h$를 얻은 후, 최종 출력은 다음과 같이 계산됩니다:
+
+$$
+F'_h = W_h \ast F_h + B_h \quad (8)
+$$
+
+---
+
+**The double attention module with channel attention and edge attention can guide the multi-scale network to extract more effective features for chicken segmentation.**  
+채널 어텐션과 엣지 어텐션을 포함한 이중 어텐션 모듈은, 다중 스케일 네트워크가 닭 분할을 위해 보다 효과적인 특징을 추출하도록 유도할 수 있습니다.
+
+**The flowchart of the proposed double attention module based network is shown in Fig. 3.**  
+제안된 이중 어텐션 모듈 기반 네트워크의 흐름도는 Fig. 3에 나타나 있습니다.
+
+---
+
+### **Mask prediction and multi-scale side-outputs**  
+**마스크 예측 및 다중 스케일 사이드 출력**
+
+**The detailed pipeline of multi-scale side-outputs and combined loss are shown in Fig. 6.**  
+다중 스케일 사이드 출력과 결합 손실의 세부 흐름은 Fig. 6에 제시되어 있습니다.
+
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/d9e80883-8063-4475-84ef-3a12357c7bd3" alt="image" width="700">
+</p>
+그림 6. 다중 스케일 마스크 예측 및 결합 손실 처리 과정.
+
+**To simplify, the main encoder-decoder part of the network is simply denoted as U shape which can be found in Fig. 3.**  
+간단히 하기 위해, 네트워크의 주요 인코더-디코더 구조는 Fig. 3에 보이는 U-자 형태로 표현됩니다.
+
+---
+
+**As shown in Fig. 6, after obtaining features**  
+Fig. 6에서 보이듯, 다음과 같은 특징을 추출한 뒤:
+
+$$
+F_{EA} = \{F_{EA_1}, ..., F_{EA_n}\}
+$$
+
+**returned by edge attention followed with convolutional and ReLU operations as the flowchart shown,**  
+엣지 어텐션과 그 후의 합성곱 및 ReLU 연산을 거쳐 얻은 결과입니다.
+
+---
+
+**predicted multi-scale outputs**  
+이후 예측된 다중 스케일 출력은 다음과 같습니다:
+
+$$
+M = \{M_1, ..., M_n\}
+$$
+
+**from multi-scale layers are obtained by corresponding mask prediction (MP) block, which can be formulated as following:**  
+이 출력들은 각각의 마스크 예측 블록 $MP$를 통해 다음과 같이 계산됩니다:
+
+$$
+\begin{aligned}
+M_1 &= MP(F_{EA_1}) \\
+M_i &= MP(F_{EA_i}) \\
+M_n &= MP(F_{EA_n})
+\end{aligned}
+\quad (9)
+$$
+
+---
+
+**where $n$ is the total layer number.**  
+여기서 $n$은 전체 층 수를 의미합니다.
+
+**$MP(.)$ denotes mask prediction block which includes up-sample, convolutional and softmax operations.**  
+$MP(.)$는 업샘플링, 합성곱, 소프트맥스 연산으로 구성된 마스크 예측 블록을 의미합니다.
+
+**The side-output module is regarded as a classifier to produce a companion local output map for each layer by mask prediction operation.**  
+사이드 출력 모듈은 각 층에 대해 마스크 예측 연산을 통해 지역적 보조 출력 맵을 생성하는 분류기로 간주됩니다.
+
+---
+
+### **D. COMBINED LOSS**  
+**D. 결합 손실 함수**
+
+**To conduct effective supervision for the network, we utilize the combined average loss of the multi-scale side-outputs for effective segmentation performance.**  
+네트워크의 효과적인 학습을 위해, 다중 스케일 사이드 출력의 평균 손실을 결합한 형태로 사용하여 분할 성능을 향상시킵니다.
+
+---
+
+**For the $i^{\text{th}}$ layer, we can obtain the loss($i$) by negative log-likelihood loss**  
+$i$번째 층에 대해, 음의 로그 가능도 손실(negative log-likelihood loss)을 통해 손실 값을 계산할 수 있습니다:
+
+$$
+\text{loss}(i) = -y \log(y_i) \quad (10)
+$$
+
+---
+
+**where $y$ denotes the ground truth and $y_i$ is the predicted mask of the $i^{\text{th}}$ layer.**  
+여기서 $y$는 정답 마스크(Ground truth), $y_i$는 $i$번째 층에서 예측된 마스크입니다.
+
+---
+
+**Then the combined loss of the network can be defined as following:**  
+그 후, 전체 네트워크에 대한 결합 손실은 다음과 같이 정의됩니다:
+
+$$
+L = \sum_{i=1}^{n} \omega_i \cdot \text{loss}(i) \quad (11)
+$$
+
+---
+
+**where $\omega_i$ is the loss weight for each side-output layer, and $n$ is the side-output number**  
+여기서 $\omega_i$는 각 사이드 출력층에 대한 손실 가중치이며, $n$은 사이드 출력의 개수입니다.
+
+**($\omega_i$ is set to 0.25, $n$ is set to 4 in our paper).**  
+본 논문에서는 $\omega_i = 0.25$, $n = 4$로 설정하였습니다.
+
+**$\text{loss}(i)$ denotes the loss of the $i^{\text{th}}$ side-output layer.**  
+$\text{loss}(i)$는 $i$번째 사이드 출력층의 손실 값을 의미합니다.
+
+---
+
+**The process of multi-scale outputs and combined loss is demonstrated in Fig. 6,**  
+다중 스케일 출력과 결합 손실 계산 과정은 Fig. 6에 설명되어 있습니다.
+
+**where Conv+softmax denotes the convolutional (kernel size $1 \times 1$) and softmax operations.**  
+여기서 Conv+softmax는 $1 \times 1$ 커널의 합성곱 연산과 softmax 연산을 의미합니다.
+
+**Besides, bilinear interpolation method is used as up-sampling operation.**  
+또한, 업샘플링 연산에는 이중선형 보간법(bilinear interpolation)이 사용됩니다.
+
+---
+
+**To utilize side-output segmentation maps effectively, the average map of all side-output maps is computed as the final segmentation result.**  
+사이드 출력 분할 맵을 효과적으로 활용하기 위해, 모든 사이드 출력 맵의 평균을 최종 분할 결과로 사용합니다.
+
+---
