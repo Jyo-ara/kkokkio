@@ -879,6 +879,17 @@ $\text{loss}(i)$는 $i$번째 사이드 출력층의 손실 값을 의미합니�
 사이드 출력 분할 맵을 효과적으로 활용하기 위해, 모든 사이드 출력 맵의 평균을 최종 분할 결과로 사용합니다.
 
 ---
+
+![image](https://github.com/user-attachments/assets/9a160990-cfd5-4f9f-bb48-7b3ee5ff526b)
+![image](https://github.com/user-attachments/assets/aa528f58-15c9-48a3-a6bf-df2483272180)
+![image](https://github.com/user-attachments/assets/ed079511-99cc-4f14-a470-5f8a7350af9f)
+![image](https://github.com/user-attachments/assets/06b964a7-6ae9-4a82-b271-d436db7d3e9d)
+![image](https://github.com/user-attachments/assets/8e997c7f-a7a9-4cfd-88f3-e533beae6372)
+![image](https://github.com/user-attachments/assets/50e28e24-cdf4-43ee-a491-39395b381c64)
+![image](https://github.com/user-attachments/assets/13cec4b6-70e8-4e6d-939d-0b376cc0f457)
+![image](https://github.com/user-attachments/assets/18a3c598-c5bb-400a-a6df-c3c0892da483)
+
+---
 ---
 
 # **IV. EXPERIMENT 실험**
@@ -1262,6 +1273,16 @@ MSAnet의 각 구성 요소가 모델 성능에 미치는 영향을 파악하기
 전반적으로, 유사한 테스트 시간 조건 하에서 제안된 MSAnet은 닭 데이터셋에서 더 나은 분할 성능을 달성합니다.
 
 ---
+
+![image](https://github.com/user-attachments/assets/0883ee9d-1633-4a1c-b345-98c0fcdec8df)
+![image](https://github.com/user-attachments/assets/23d8b60b-0026-4845-ac6b-1677c7b2465b)
+![image](https://github.com/user-attachments/assets/0badf9c5-6326-4a0c-82be-b89042bb4600)
+![image](https://github.com/user-attachments/assets/a9b58ce4-5853-4fc8-a668-f27db0caf8a5)
+![image](https://github.com/user-attachments/assets/927fbec1-8551-4a8b-97c5-92030a91db7c)
+![image](https://github.com/user-attachments/assets/4c02c1fa-a04f-4fd5-a88c-13b4989d1a59)
+![image](https://github.com/user-attachments/assets/7898df95-2fb9-467e-b578-c08b6a7ff862)
+
+---
 ---
 
 ### **V. CONCLUSION**  
@@ -1290,6 +1311,10 @@ MSAnet의 각 구성 요소가 모델 성능에 미치는 영향을 파악하기
 
 **In future work, we will continue to extend the chicken dataset to contain more variants and conditions for chicken behaviour study, such as detection, segmentation, tracking and recognition.**  
 향후 연구에서는 닭의 행동 분석을 위한 탐지, 분할, 추적, 인식 등 다양한 작업에 대응할 수 있도록, 데이터셋의 변이성과 상황을 확장할 예정입니다.
+
+---
+
+![image](https://github.com/user-attachments/assets/87784b32-b84b-405d-9a3c-256368d10469)
 
 ---
 ---
