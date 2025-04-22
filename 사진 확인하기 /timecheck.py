@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 
 # 분석할 폴더 경로 설정 (예: ./0421 또는 절대 경로)
-folder_path = r"C:\Users\Admin\Desktop\꼬끼오\검사\0421"  # ← 여기에 경로 바꿔주세요
+folder_path = r"C:\Users\Admin\Desktop\꼬끼오\검사\0421"  # ← 따옴표 부분 내 경로 바꿔주세요
 
 # 폴더 내 모든 .txt 파일 반복
 for filename in os.listdir(folder_path):
