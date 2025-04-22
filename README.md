@@ -1,5 +1,3 @@
 # kkokkio
 
-<img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYm01amd6cWpyZWM5bXptNWJkZXZuM3R6OGppamdqOHFtaDFzbnYyayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/j45wv9P08oZBm/giphy.gif" width="400"/>
-
-![funny gif](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYm01amd6cWpyZWM5bXptNWJkZXZuM3R6OGppamdqOHFtaDFzbnYyayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/j45wv9P08oZBm/giphy.gif)
+![image](https://github.com/user-attachments/assets/64bbd0b1-1e11-4e7d-834b-0ba4ce5e5059)
